@@ -1,4 +1,4 @@
-# VFrinzy
+# VFrenzy
 
 Instantly identify VS Code windows by customizing the status bar color and displaying the workspace name.
 
@@ -14,38 +14,38 @@ Instantly identify VS Code windows by customizing the status bar color and displ
 
 | Setting | Type | Default | Description |
 |---|---|---|---|
-| `vfrinzy.statusBarColor` | string | `""` | Status bar background color (hex, e.g. `#007ACC`) |
-| `vfrinzy.statusBarFontColor` | string | `""` | Status bar text color (hex, e.g. `#FFFFFF`) |
-| `vfrinzy.showWorkspaceName` | boolean | `true` | Show workspace name in the status bar |
-| `vfrinzy.workspaceNameColor` | string | `""` | Workspace badge text color (hex) |
-| `vfrinzy.workspaceNameStyle` | enum | `normal` | `normal`, `uppercase`, or `bold-unicode` |
-| `vfrinzy.workspaceNamePrefix` | string | `$(window) ` | Icon/text prefix (supports [codicons](https://microsoft.github.io/vscode-codicons/dist/codicon.html)) |
+| `vfrenzy.statusBarColor` | string | `""` | Status bar background color (hex, e.g. `#007ACC`) |
+| `vfrenzy.statusBarFontColor` | string | `""` | Status bar text color (hex, e.g. `#FFFFFF`) |
+| `vfrenzy.showWorkspaceName` | boolean | `true` | Show workspace name in the status bar |
+| `vfrenzy.workspaceNameColor` | string | `""` | Workspace badge text color (hex) |
+| `vfrenzy.workspaceNameStyle` | enum | `normal` | `normal`, `uppercase`, or `bold-unicode` |
+| `vfrenzy.workspaceNamePrefix` | string | `$(window) ` | Icon/text prefix (supports [codicons](https://microsoft.github.io/vscode-codicons/dist/codicon.html)) |
 
 ## Commands
 
-- **VFrinzy: Set Status Bar Color** — Quick input to set the status bar color
-- **VFrinzy: Reset Status Bar Color** — Remove VFrinzy color customizations
+- **VFrenzy: Set Status Bar Color** — Quick input to set the status bar color
+- **VFrenzy: Reset Status Bar Color** — Remove VFrenzy color customizations
 
 ## Usage
 
 1. Open a workspace
-2. Run **VFrinzy: Set Status Bar Color** from the command palette (`Cmd+Shift+P`)
+2. Run **VFrenzy: Set Status Bar Color** from the command palette (`Cmd+Shift+P`)
 3. Enter a hex color — the status bar updates immediately
-4. Or go to **Settings → VFrinzy** to configure all options
+4. Or go to **Settings → VFrenzy** to configure all options
 
 Settings are saved per-workspace in `.vscode/settings.json`, so each project gets its own look.
 
 ## Installation
 
-Install directly from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=vfrinzy).
+Install directly from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=vfrenzy).
 
-Or search for **VFrinzy** in the Extensions view (`Cmd+Shift+P` → **Extensions: Install Extensions**).
+Or search for **VFrenzy** in the Extensions view (`Cmd+Shift+P` → **Extensions: Install Extensions**).
 
 ## Development
 
 ```sh
-git clone https://github.com/ahelal/vfrinzy.git
-cd vfrinzy
+git clone https://github.com/ahelal/vfrenzy.git
+cd vfrenzy
 npm install
 npm run compile
 # Press F5 in VS Code to launch the Extension Development Host

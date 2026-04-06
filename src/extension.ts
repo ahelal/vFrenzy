@@ -42,7 +42,7 @@ const MANAGED_KEYS = ['statusBar.background', 'statusBar.foreground'] as const;
  * Apply status bar background/foreground color via workbench.colorCustomizations.
  */
 async function applyStatusBarColor(): Promise<void> {
-    const cfg = vscode.workspace.getConfiguration('vfrinzy');
+    const cfg = vscode.workspace.getConfiguration('vfrenzy');
     const barColor = cfg.get<string>('statusBarColor', '').trim();
     const fontColor = cfg.get<string>('statusBarFontColor', '').trim();
 
@@ -89,7 +89,7 @@ async function applyStatusBarColor(): Promise<void> {
  * Create or update the workspace-name status bar badge.
  */
 function updateWorkspaceBadge(): void {
-    const cfg = vscode.workspace.getConfiguration('vfrinzy');
+    const cfg = vscode.workspace.getConfiguration('vfrenzy');
     const show = cfg.get<boolean>('showWorkspaceName', true);
 
     if (!show) {
@@ -99,13 +99,13 @@ function updateWorkspaceBadge(): void {
 
     if (!statusBarItem) {
         statusBarItem = vscode.window.createStatusBarItem(
-            'vfrinzy.workspaceName',
+            'vfrenzy.workspaceName',
             vscode.StatusBarAlignment.Left,
             99
         );
-        statusBarItem.name = 'VFrinzy Workspace Name';
-        statusBarItem.tooltip = 'Click to customize (VFrinzy)';
-        statusBarItem.command = 'vfrinzy.showMenu';
+        statusBarItem.name = 'VFrenzy Workspace Name';
+        statusBarItem.tooltip = 'Click to customize (VFrenzy)';
+        statusBarItem.command = 'vfrenzy.showMenu';
     }
 
     // Determine workspace name
@@ -199,11 +199,11 @@ const ICON_PRESETS: IconPreset[] = [
 ];
 
 async function setCustomNameCommand(): Promise<void> {
-    const cfg = vscode.workspace.getConfiguration('vfrinzy');
+    const cfg = vscode.workspace.getConfiguration('vfrenzy');
     const current = cfg.get<string>('customName', '').trim();
 
     const input = await vscode.window.showInputBox({
-        title: 'VFrinzy: Set Custom Workspace Name',
+        title: 'VFrenzy: Set Custom Workspace Name',
         prompt: 'Enter a custom name to display instead of the workspace name. Leave blank to use the workspace name.',
         value: current,
         placeHolder: vscode.workspace.name ?? 'My Project',
@@ -219,13 +219,13 @@ async function setCustomNameCommand(): Promise<void> {
     await cfg.update('customName', newName, target);
     vscode.window.showInformationMessage(
         newName
-            ? `VFrinzy: Custom name set to "${newName}".`
-            : 'VFrinzy: Custom name cleared — using workspace name.'
+            ? `VFrenzy: Custom name set to "${newName}".`
+            : 'VFrenzy: Custom name cleared — using workspace name.'
     );
 }
 
 async function setIconCommand(): Promise<void> {
-    const cfg = vscode.workspace.getConfiguration('vfrinzy');
+    const cfg = vscode.workspace.getConfiguration('vfrenzy');
     const currentIcon = cfg.get<string>('workspaceNameIcon', '').trim();
 
     const items: vscode.QuickPickItem[] = [
@@ -240,7 +240,7 @@ async function setIconCommand(): Promise<void> {
     ];
 
     const pick = await vscode.window.showQuickPick(items, {
-        title: 'VFrinzy: Set Workspace Name Icon',
+        title: 'VFrenzy: Set Workspace Name Icon',
         placeHolder: currentIcon ? `Current: ${currentIcon}` : 'Pick an icon',
     });
 
@@ -252,7 +252,7 @@ async function setIconCommand(): Promise<void> {
         chosenIcon = undefined;
     } else if (pick.label === '$(pencil) Custom icon...') {
         const input = await vscode.window.showInputBox({
-            title: 'VFrinzy: Enter Codicon Name',
+            title: 'VFrenzy: Enter Codicon Name',
             prompt: 'Enter a codicon name without $() — e.g. folder, star-full, rocket',
             value: currentIcon,
             placeHolder: 'folder',
@@ -271,8 +271,8 @@ async function setIconCommand(): Promise<void> {
     await cfg.update('workspaceNameIcon', chosenIcon, target);
     vscode.window.showInformationMessage(
         chosenIcon
-            ? `VFrinzy: Workspace icon set to $(${chosenIcon})`
-            : 'VFrinzy: Icon removed — using workspaceNamePrefix setting.'
+            ? `VFrenzy: Workspace icon set to $(${chosenIcon})`
+            : 'VFrenzy: Icon removed — using workspaceNamePrefix setting.'
     );
 }
 
@@ -318,7 +318,7 @@ const FONT_COLOR_PRESETS: ColorPreset[] = [
  * Show a font color picker with presets + custom hex entry, then apply.
  */
 async function setFontColorCommand(): Promise<void> {
-    const cfg = vscode.workspace.getConfiguration('vfrinzy');
+    const cfg = vscode.workspace.getConfiguration('vfrenzy');
     const currentColor = cfg.get<string>('statusBarFontColor', '');
 
     const items: vscode.QuickPickItem[] = [
@@ -333,7 +333,7 @@ async function setFontColorCommand(): Promise<void> {
     ];
 
     const pick = await vscode.window.showQuickPick(items, {
-        title: 'VFrinzy: Set Status Bar Font Color',
+        title: 'VFrenzy: Set Status Bar Font Color',
         placeHolder: currentColor ? `Current: ${currentColor}` : 'Pick a font color',
     });
 
@@ -345,7 +345,7 @@ async function setFontColorCommand(): Promise<void> {
         chosenColor = undefined;
     } else if (pick.label === '$(pencil) Custom hex color...') {
         const input = await vscode.window.showInputBox({
-            title: 'VFrinzy: Enter Custom Font Hex Color',
+            title: 'VFrenzy: Enter Custom Font Hex Color',
             prompt: 'Enter a hex color (e.g. #FFFFFF)',
             value: currentColor,
             validateInput: (value) => {
@@ -372,7 +372,7 @@ async function setFontColorCommand(): Promise<void> {
  * Show a color picker with presets + custom hex entry, then apply.
  */
 async function setColorCommand(): Promise<void> {
-    const cfg = vscode.workspace.getConfiguration('vfrinzy');
+    const cfg = vscode.workspace.getConfiguration('vfrenzy');
     const currentColor = cfg.get<string>('statusBarColor', '');
 
     const items: vscode.QuickPickItem[] = [
@@ -387,7 +387,7 @@ async function setColorCommand(): Promise<void> {
     ];
 
     const pick = await vscode.window.showQuickPick(items, {
-        title: 'VFrinzy: Set Status Bar Color',
+        title: 'VFrenzy: Set Status Bar Color',
         placeHolder: currentColor ? `Current: ${currentColor}` : 'Pick a color',
     });
 
@@ -399,7 +399,7 @@ async function setColorCommand(): Promise<void> {
         chosenColor = undefined;
     } else if (pick.label === '$(pencil) Custom hex color...') {
         const input = await vscode.window.showInputBox({
-            title: 'VFrinzy: Enter Custom Hex Color',
+            title: 'VFrenzy: Enter Custom Hex Color',
             prompt: 'Enter a hex color (e.g. #007ACC)',
             value: currentColor,
             validateInput: (value) => {
@@ -423,10 +423,10 @@ async function setColorCommand(): Promise<void> {
 }
 
 /**
- * Reset VFrinzy colors to defaults.
+ * Reset VFrenzy colors to defaults.
  */
 async function resetColorCommand(): Promise<void> {
-    const cfg = vscode.workspace.getConfiguration('vfrinzy');
+    const cfg = vscode.workspace.getConfiguration('vfrenzy');
     const wbConfig = vscode.workspace.getConfiguration('workbench');
 
     const keysToRemove = [
@@ -461,7 +461,7 @@ async function resetColorCommand(): Promise<void> {
         }
     }
 
-    vscode.window.showInformationMessage('VFrinzy: Status bar color reset to default.');
+    vscode.window.showInformationMessage('VFrenzy: Status bar color reset to default.');
 }
 
 /**
@@ -471,7 +471,7 @@ async function showMenuCommand(): Promise<void> {
     type Action = 'customName' | 'color' | 'fontColor' | 'icon' | 'style' | 'decoration' | 'reset';
     interface MenuItem extends vscode.QuickPickItem { action?: Action; }
 
-    const cfg = vscode.workspace.getConfiguration('vfrinzy');
+    const cfg = vscode.workspace.getConfiguration('vfrenzy');
     const currentColor = cfg.get<string>('statusBarColor', '');
     const currentIcon  = cfg.get<string>('workspaceNameIcon', '');
     const currentDeco  = cfg.get<string>('workspaceNameBadgeDecoration', 'none');
@@ -518,14 +518,14 @@ async function showMenuCommand(): Promise<void> {
         },
         { label: '', kind: vscode.QuickPickItemKind.Separator },
         {
-            label: '$(discard) Reset all VFrinzy settings',
+            label: '$(discard) Reset all VFrenzy settings',
             description: 'Remove colors and restore defaults',
             action: 'reset',
         },
     ];
 
     const pick = await vscode.window.showQuickPick(items, {
-        title: 'VFrinzy: Customize workspace badge',
+        title: 'VFrenzy: Customize workspace badge',
         placeHolder: 'Choose what to change',
     });
 
@@ -549,7 +549,7 @@ async function showMenuCommand(): Promise<void> {
                     { label: 'uppercase',    description: 'UPPERCASE',                   picked: currentStyle === 'uppercase' },
                     { label: 'bold-unicode', description: '𝗕𝗼𝗹𝗱 𝗨𝗻𝗶𝗰𝗼𝗱𝗲', picked: currentStyle === 'bold-unicode' },
                 ],
-                { title: 'VFrinzy: Workspace Name Style' }
+                { title: 'VFrenzy: Workspace Name Style' }
             );
             if (!stylePick) { return; }
             await cfg.update('workspaceNameStyle', stylePick.label, target);
@@ -575,7 +575,7 @@ async function showMenuCommand(): Promise<void> {
             ].map(d => ({ ...d, picked: d.label === currentDeco }));
 
             const decoPick = await vscode.window.showQuickPick(DECO_OPTIONS, {
-                title: 'VFrinzy: Badge Decoration Pattern',
+                title: 'VFrenzy: Badge Decoration Pattern',
             });
             if (!decoPick) { return; }
             await cfg.update('workspaceNameBadgeDecoration', decoPick.label, target);
@@ -592,17 +592,17 @@ export function activate(context: vscode.ExtensionContext): void {
     // React to config changes
     context.subscriptions.push(
         vscode.workspace.onDidChangeConfiguration(e => {
-            if (e.affectsConfiguration('vfrinzy.statusBarColor') ||
-                e.affectsConfiguration('vfrinzy.statusBarFontColor')) {
+            if (e.affectsConfiguration('vfrenzy.statusBarColor') ||
+                e.affectsConfiguration('vfrenzy.statusBarFontColor')) {
                 applyStatusBarColor();
             }
-            if (e.affectsConfiguration('vfrinzy.customName') ||
-                e.affectsConfiguration('vfrinzy.showWorkspaceName') ||
-                e.affectsConfiguration('vfrinzy.workspaceNameColor') ||
-                e.affectsConfiguration('vfrinzy.workspaceNameStyle') ||
-                e.affectsConfiguration('vfrinzy.workspaceNamePrefix') ||
-                e.affectsConfiguration('vfrinzy.workspaceNameIcon') ||
-                e.affectsConfiguration('vfrinzy.workspaceNameBadgeDecoration')) {
+            if (e.affectsConfiguration('vfrenzy.customName') ||
+                e.affectsConfiguration('vfrenzy.showWorkspaceName') ||
+                e.affectsConfiguration('vfrenzy.workspaceNameColor') ||
+                e.affectsConfiguration('vfrenzy.workspaceNameStyle') ||
+                e.affectsConfiguration('vfrenzy.workspaceNamePrefix') ||
+                e.affectsConfiguration('vfrenzy.workspaceNameIcon') ||
+                e.affectsConfiguration('vfrenzy.workspaceNameBadgeDecoration')) {
                 updateWorkspaceBadge();
             }
         })
@@ -610,11 +610,11 @@ export function activate(context: vscode.ExtensionContext): void {
 
     // Register commands
     context.subscriptions.push(
-        vscode.commands.registerCommand('vfrinzy.showMenu', showMenuCommand),
-        vscode.commands.registerCommand('vfrinzy.setCustomName', setCustomNameCommand),
-        vscode.commands.registerCommand('vfrinzy.setColor', setColorCommand),
-        vscode.commands.registerCommand('vfrinzy.resetColor', resetColorCommand),
-        vscode.commands.registerCommand('vfrinzy.setIcon', setIconCommand)
+        vscode.commands.registerCommand('vfrenzy.showMenu', showMenuCommand),
+        vscode.commands.registerCommand('vfrenzy.setCustomName', setCustomNameCommand),
+        vscode.commands.registerCommand('vfrenzy.setColor', setColorCommand),
+        vscode.commands.registerCommand('vfrenzy.resetColor', resetColorCommand),
+        vscode.commands.registerCommand('vfrenzy.setIcon', setIconCommand)
     );
 
     // Dispose status bar item on deactivation

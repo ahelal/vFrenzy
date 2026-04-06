@@ -1,15 +1,7 @@
 {
-    "vfrinzy.statusBarColor": "#C7254E",
-    "workbench.colorCustomizations": {
-        "statusBar.background": "#C7254E",
-        "statusBar.noFolderBackground": "#C7254E",
-        "statusBar.debuggingBackground": "#C7254E",
-        "statusBar.foreground": "#FFD700",
-        "statusBar.noFolderForeground": "#FFD700",
-        "statusBar.debuggingForeground": "#FFD700"
-    },
-    "vfrinzy.statusBarFontColor": "#FFD700",
-    "vfrinzy.workspaceNameIcon": "star-full",
-    "vfrinzy.workspaceNameStyle": "uppercase",
-    "vfrinzy.workspaceNameBadgeDecoration": "double-angle"
+    "vfrenzy.statusBarColor": "#C7254E",
+    "vfrenzy.statusBarFontColor": "#FFD700",
+    "vfrenzy.workspaceNameIcon": "star-full",
+    "vfrenzy.workspaceNameStyle": "uppercase",
+    "vfrenzy.workspaceNameBadgeDecoration": "double-angle"
 }

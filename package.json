@@ -1,9 +1,14 @@
 {
-  "name": "vfrinzy",
-  "displayName": "VFrinzy",
+  "name": "vfrenzy",
+  "displayName": "VFrenzy",
   "description": "Instantly identify VS Code windows by customizing the status bar color and displaying the workspace name.",
   "version": "0.0.1",
-  "publisher": "ahelal",
+  "publisher": "Doma",
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ahelal/VFrenzy"
+  },
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -16,33 +21,33 @@
   "main": "./out/extension.js",
   "contributes": {
     "configuration": {
-      "title": "VFrinzy",
+      "title": "VFrenzy",
       "properties": {
-        "vfrinzy.statusBarColor": {
+        "vfrenzy.statusBarColor": {
           "type": "string",
           "default": "",
           "description": "Status bar background color (hex, e.g. #007ACC). Leave empty to use default.",
           "scope": "window"
         },
-        "vfrinzy.statusBarFontColor": {
+        "vfrenzy.statusBarFontColor": {
           "type": "string",
           "default": "",
           "description": "Status bar foreground/text color (hex, e.g. #FFFFFF). Leave empty to use default.",
           "scope": "window"
         },
-        "vfrinzy.showWorkspaceName": {
+        "vfrenzy.showWorkspaceName": {
           "type": "boolean",
           "default": true,
           "description": "Show the workspace name as a badge in the status bar.",
           "scope": "window"
         },
-        "vfrinzy.workspaceNameColor": {
+        "vfrenzy.workspaceNameColor": {
           "type": "string",
           "default": "",
           "description": "Workspace name badge text color (hex, e.g. #FFD700). Leave empty to inherit from status bar.",
           "scope": "window"
         },
-        "vfrinzy.workspaceNameStyle": {
+        "vfrenzy.workspaceNameStyle": {
           "type": "string",
           "default": "normal",
           "enum": [
@@ -58,25 +63,25 @@
           "description": "Style for the workspace name badge text.",
           "scope": "window"
         },
-        "vfrinzy.workspaceNamePrefix": {
+        "vfrenzy.workspaceNamePrefix": {
           "type": "string",
           "default": "$(window) ",
-          "description": "Prefix for the workspace name badge (supports codicons like $(folder), $(star-full)). Ignored when vfrinzy.workspaceNameIcon is set.",
+          "description": "Prefix for the workspace name badge (supports codicons like $(folder), $(star-full)). Ignored when vfrenzy.workspaceNameIcon is set.",
           "scope": "window"
         },
-        "vfrinzy.workspaceNameIcon": {
+        "vfrenzy.workspaceNameIcon": {
           "type": "string",
           "default": "",
           "description": "Codicon ID to show before the workspace name (e.g. folder, star-full, rocket, home). When set, overrides the icon portion of workspaceNamePrefix. Leave empty to use workspaceNamePrefix as-is. See https://code.visualstudio.com/api/references/icons-in-labels for available icons.",
           "scope": "window"
         },
-        "vfrinzy.customName": {
+        "vfrenzy.customName": {
           "type": "string",
           "default": "",
           "description": "Custom display name shown in the status bar badge instead of the workspace name. Leave empty to use the workspace name.",
           "scope": "window"
         },
-        "vfrinzy.workspaceNameBadgeDecoration": {
+        "vfrenzy.workspaceNameBadgeDecoration": {
           "type": "string",
           "default": "none",
           "enum": [
@@ -118,24 +123,24 @@
     },
     "commands": [
       {
-        "command": "vfrinzy.setCustomName",
-        "title": "VFrinzy: Set Custom Workspace Name"
+        "command": "vfrenzy.setCustomName",
+        "title": "VFrenzy: Set Custom Workspace Name"
       },
       {
-        "command": "vfrinzy.showMenu",
-        "title": "VFrinzy: Customize Workspace Badge"
+        "command": "vfrenzy.showMenu",
+        "title": "VFrenzy: Customize Workspace Badge"
       },
       {
-        "command": "vfrinzy.setColor",
-        "title": "VFrinzy: Set Status Bar Color"
+        "command": "vfrenzy.setColor",
+        "title": "VFrenzy: Set Status Bar Color"
       },
       {
-        "command": "vfrinzy.resetColor",
-        "title": "VFrinzy: Reset Status Bar Color"
+        "command": "vfrenzy.resetColor",
+        "title": "VFrenzy: Reset Status Bar Color"
       },
       {
-        "command": "vfrinzy.setIcon",
-        "title": "VFrinzy: Set Workspace Name Icon"
+        "command": "vfrenzy.setIcon",
+        "title": "VFrenzy: Set Workspace Name Icon"
       }
     ]
   },
