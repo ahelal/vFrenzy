@@ -1,0 +1,32 @@
+# Environment / secrets
+env
+.env
+**/.env
+
+# Compiled output
+out/
+dist/
+
+# Dependencies
+node_modules/
+
+# Packaged extension
+*.vsix
+
+# TypeScript cache
+*.tsbuildinfo
+
+# macOS
+.DS_Store
+
+# VS Code test runner
+.vscode-test/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local install script
+install.sh
+
+.devcontainer/*

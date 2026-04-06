@@ -1,0 +1,152 @@
+{
+  "name": "vfrinzy",
+  "displayName": "VFrinzy",
+  "description": "Instantly identify VS Code windows by customizing the status bar color and displaying the workspace name.",
+  "version": "0.0.1",
+  "publisher": "ahelal",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "VFrinzy",
+      "properties": {
+        "vfrinzy.statusBarColor": {
+          "type": "string",
+          "default": "",
+          "description": "Status bar background color (hex, e.g. #007ACC). Leave empty to use default.",
+          "scope": "window"
+        },
+        "vfrinzy.statusBarFontColor": {
+          "type": "string",
+          "default": "",
+          "description": "Status bar foreground/text color (hex, e.g. #FFFFFF). Leave empty to use default.",
+          "scope": "window"
+        },
+        "vfrinzy.showWorkspaceName": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the workspace name as a badge in the status bar.",
+          "scope": "window"
+        },
+        "vfrinzy.workspaceNameColor": {
+          "type": "string",
+          "default": "",
+          "description": "Workspace name badge text color (hex, e.g. #FFD700). Leave empty to inherit from status bar.",
+          "scope": "window"
+        },
+        "vfrinzy.workspaceNameStyle": {
+          "type": "string",
+          "default": "normal",
+          "enum": [
+            "normal",
+            "uppercase",
+            "bold-unicode"
+          ],
+          "enumDescriptions": [
+            "Display workspace name as-is",
+            "Display workspace name in UPPERCASE",
+            "Display workspace name in bold (Unicode bold characters)"
+          ],
+          "description": "Style for the workspace name badge text.",
+          "scope": "window"
+        },
+        "vfrinzy.workspaceNamePrefix": {
+          "type": "string",
+          "default": "$(window) ",
+          "description": "Prefix for the workspace name badge (supports codicons like $(folder), $(star-full)). Ignored when vfrinzy.workspaceNameIcon is set.",
+          "scope": "window"
+        },
+        "vfrinzy.workspaceNameIcon": {
+          "type": "string",
+          "default": "",
+          "description": "Codicon ID to show before the workspace name (e.g. folder, star-full, rocket, home). When set, overrides the icon portion of workspaceNamePrefix. Leave empty to use workspaceNamePrefix as-is. See https://code.visualstudio.com/api/references/icons-in-labels for available icons.",
+          "scope": "window"
+        },
+        "vfrinzy.customName": {
+          "type": "string",
+          "default": "",
+          "description": "Custom display name shown in the status bar badge instead of the workspace name. Leave empty to use the workspace name.",
+          "scope": "window"
+        },
+        "vfrinzy.workspaceNameBadgeDecoration": {
+          "type": "string",
+          "default": "none",
+          "enum": [
+            "none",
+            "brackets",
+            "angle",
+            "double-angle",
+            "braces",
+            "chevrons",
+            "dots",
+            "stars",
+            "arrows",
+            "diagonal",
+            "gradient",
+            "pipes",
+            "equals",
+            "wave"
+          ],
+          "enumDescriptions": [
+            "No decoration",
+            "[ WorkspaceName ]",
+            "‹ WorkspaceName ›",
+            "« WorkspaceName »",
+            "{ WorkspaceName }",
+            "» WorkspaceName «  (reverse chevrons)",
+            "• WorkspaceName •",
+            "★ WorkspaceName ★",
+            "→ WorkspaceName ←",
+            "╱ WorkspaceName ╲  (diagonal hint)",
+            "░▒▓ WorkspaceName ▓▒░  (gradient/stripe hint)",
+            "┃ WorkspaceName ┃",
+            "══ WorkspaceName ══",
+            "〜 WorkspaceName 〜"
+          ],
+          "description": "Decorative pattern applied around the workspace name badge text. Note: VS Code's status bar background only supports solid hex colors via the official API; true CSS background patterns (diagonal stripes, gradients) are not possible without a CSS-injection extension. These decorations enhance the text area itself using Unicode characters.",
+          "scope": "window"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "vfrinzy.setCustomName",
+        "title": "VFrinzy: Set Custom Workspace Name"
+      },
+      {
+        "command": "vfrinzy.showMenu",
+        "title": "VFrinzy: Customize Workspace Badge"
+      },
+      {
+        "command": "vfrinzy.setColor",
+        "title": "VFrinzy: Set Status Bar Color"
+      },
+      {
+        "command": "vfrinzy.resetColor",
+        "title": "VFrinzy: Reset Status Bar Color"
+      },
+      {
+        "command": "vfrinzy.setIcon",
+        "title": "VFrinzy: Set Workspace Name Icon"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}
