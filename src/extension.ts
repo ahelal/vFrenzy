@@ -464,11 +464,248 @@ async function resetColorCommand(): Promise<void> {
     vscode.window.showInformationMessage('VFrenzy: Status bar color reset to default.');
 }
 
+// ── Shell tab ────────────────────────────────────────────────────────────────
+
+interface ShellCommand {
+    name: string;
+    command: string;
+    devContainerCommand?: string;
+}
+
+/** Returns true when running inside a VS Code dev container. */
+function isInDevContainer(): boolean {
+    return vscode.env.remoteName === 'dev-container';
+}
+
+/** Resolves the effective command to run based on the current environment. */
+function resolveCommand(sc: ShellCommand): string {
+    if (isInDevContainer() && sc.devContainerCommand) {
+        return sc.devContainerCommand;
+    }
+    return sc.command;
+}
+
+/** Parse and validate the `vfrenzy.shellCommands` setting, filtering bad entries. */
+function getShellCommands(): ShellCommand[] {
+    const raw = vscode.workspace.getConfiguration('vfrenzy').get('shellCommands');
+    if (!Array.isArray(raw)) { return []; }
+    return raw.filter(
+        (item): item is ShellCommand =>
+            item !== null &&
+            typeof item === 'object' &&
+            typeof item.name === 'string' && item.name.trim() !== '' &&
+            typeof item.command === 'string' && item.command.trim() !== ''
+    ).map(item => ({
+        name: item.name.trim(),
+        command: item.command.trim(),
+        devContainerCommand: typeof item.devContainerCommand === 'string' && item.devContainerCommand.trim() !== ''
+            ? item.devContainerCommand.trim()
+            : undefined,
+    }));
+}
+
+async function openShellTabCommand(): Promise<void> {
+    const shellCommands = getShellCommands();
+
+    if (shellCommands.length === 0) {
+        const choice = await vscode.window.showWarningMessage(
+            'VFrenzy: No shell commands configured.',
+            'Add a command'
+        );
+        if (choice === 'Add a command') {
+            await addShellCommandWizard();
+        }
+        return;
+    }
+
+    let chosen: ShellCommand | undefined;
+    if (shellCommands.length === 1) {
+        chosen = shellCommands[0];
+    } else {
+        const inContainer = isInDevContainer();
+        const pick = await vscode.window.showQuickPick(
+            shellCommands.map(sc => {
+                const effective = resolveCommand(sc);
+                const hasOverride = inContainer && !!sc.devContainerCommand;
+                return {
+                    label: `$(terminal) ${sc.name}`,
+                    description: effective,
+                    detail: hasOverride ? '$(remote-explorer) Using dev-container command' : undefined,
+                    shellCommand: sc,
+                };
+            }),
+            { title: 'VFrenzy: Open Shell Tab', placeHolder: 'Choose a shell command' }
+        );
+        if (!pick) { return; }
+        chosen = pick.shellCommand;
+    }
+
+    const cfg = vscode.workspace.getConfiguration('vfrenzy');
+    const confirm = cfg.get<boolean>('shellCommandConfirm', true);
+    const effectiveCommand = resolveCommand(chosen);
+
+    if (confirm) {
+        const answer = await vscode.window.showInformationMessage(
+            `VFrenzy: Run "${chosen.name}"?`,
+            { detail: `Command: ${effectiveCommand}`, modal: true },
+            'Run'
+        );
+        if (answer !== 'Run') { return; }
+    }
+
+    const terminal = vscode.window.createTerminal({
+        name: chosen.name,
+        location: vscode.TerminalLocation.Editor,
+    });
+    terminal.show();
+    terminal.sendText(effectiveCommand, true);
+}
+
+/** Pick the right config target, asking the user when a workspace is open. */
+async function pickShellConfigTarget(): Promise<vscode.ConfigurationTarget | undefined> {
+    if (!vscode.workspace.workspaceFolders) {
+        return vscode.ConfigurationTarget.Global;
+    }
+    const pick = await vscode.window.showQuickPick(
+        [
+            { label: '$(home) User settings', target: vscode.ConfigurationTarget.Global },
+            { label: '$(folder) Workspace settings', target: vscode.ConfigurationTarget.Workspace },
+        ],
+        { title: 'VFrenzy: Save to which settings?' }
+    );
+    return pick?.target;
+}
+
+async function addShellCommandWizard(): Promise<void> {
+    const name = await vscode.window.showInputBox({
+        title: 'VFrenzy: Add Shell Command — Step 1/3',
+        prompt: 'Enter a display name for this shell command',
+        placeHolder: 'e.g. Start Dev Server',
+        validateInput: v => v.trim() === '' ? 'Name cannot be empty' : null,
+    });
+    if (name === undefined || name.trim() === '') { return; }
+
+    const command = await vscode.window.showInputBox({
+        title: 'VFrenzy: Add Shell Command — Step 2/3',
+        prompt: 'Enter the command to run locally (outside dev-container)',
+        placeHolder: 'e.g. npm run dev',
+        validateInput: v => v.trim() === '' ? 'Command cannot be empty' : null,
+    });
+    if (command === undefined || command.trim() === '') { return; }
+
+    const addOverride = await vscode.window.showQuickPick(
+        [
+            { label: '$(remote-explorer) Yes, add a dev-container override', value: true },
+            { label: '$(dash) No, use the same command everywhere', value: false },
+        ],
+        { title: 'VFrenzy: Add Shell Command — Step 3/3', placeHolder: 'Add a different command when inside a dev-container?' }
+    );
+    if (addOverride === undefined) { return; }
+
+    let devContainerCommand: string | undefined;
+    if (addOverride.value) {
+        const dcInput = await vscode.window.showInputBox({
+            title: 'VFrenzy: Dev-Container Command',
+            prompt: 'Enter the command to run inside a dev-container',
+            placeHolder: 'e.g. bash -c "source .devcontainer/setup.sh && npm run dev"',
+            validateInput: v => v.trim() === '' ? 'Command cannot be empty' : null,
+        });
+        if (dcInput === undefined || dcInput.trim() === '') { return; }
+        devContainerCommand = dcInput.trim();
+    }
+
+    const target = await pickShellConfigTarget();
+    if (target === undefined) { return; }
+
+    const cfg = vscode.workspace.getConfiguration('vfrenzy');
+    const inspected = cfg.inspect<ShellCommand[]>('shellCommands');
+    const existing: ShellCommand[] =
+        target === vscode.ConfigurationTarget.Workspace
+            ? [...(inspected?.workspaceValue ?? [])]
+            : [...(inspected?.globalValue ?? [])];
+
+    const entry: ShellCommand = { name: name.trim(), command: command.trim() };
+    if (devContainerCommand) { entry.devContainerCommand = devContainerCommand; }
+    existing.push(entry);
+    await cfg.update('shellCommands', existing, target);
+    vscode.window.showInformationMessage(`VFrenzy: Shell command "${name.trim()}" added.`);
+}
+
+async function manageShellCommandsCommand(): Promise<void> {
+    type SubAction = 'add' | 'remove' | 'settings';
+    interface SubItem extends vscode.QuickPickItem { action: SubAction; }
+
+    const shellCommands = getShellCommands();
+
+    const items: SubItem[] = [
+        {
+            label: '$(add) Add new shell command',
+            detail: 'Save a named command that opens as a terminal tab',
+            action: 'add',
+        },
+        {
+            label: `$(remove) Remove a shell command`,
+            detail: shellCommands.length === 0 ? '(no commands configured)' : `${shellCommands.length} command(s) configured`,
+            action: 'remove',
+        },
+        { label: '', kind: vscode.QuickPickItemKind.Separator, action: 'settings' },
+        {
+            label: '$(settings-gear) Open shell commands in settings',
+            detail: 'Edit vfrenzy.shellCommands directly in settings.json',
+            action: 'settings',
+        },
+    ];
+
+    const pick = await vscode.window.showQuickPick(items, {
+        title: 'VFrenzy: Manage Shell Commands',
+        placeHolder: 'Choose an action',
+    });
+    if (!pick) { return; }
+
+    switch (pick.action) {
+        case 'add':
+            return addShellCommandWizard();
+
+        case 'remove': {
+            if (shellCommands.length === 0) {
+                vscode.window.showInformationMessage('VFrenzy: No shell commands to remove.');
+                return;
+            }
+            const toRemove = await vscode.window.showQuickPick(
+                shellCommands.map(sc => ({ label: sc.name, description: sc.command, shellCommand: sc })),
+                { title: 'VFrenzy: Remove Shell Command', placeHolder: 'Select a command to remove' }
+            );
+            if (!toRemove) { return; }
+
+            const target = await pickShellConfigTarget();
+            if (target === undefined) { return; }
+
+            const cfg = vscode.workspace.getConfiguration('vfrenzy');
+            const inspected = cfg.inspect<ShellCommand[]>('shellCommands');
+            const existing: ShellCommand[] =
+                target === vscode.ConfigurationTarget.Workspace
+                    ? [...(inspected?.workspaceValue ?? [])]
+                    : [...(inspected?.globalValue ?? [])];
+
+            const updated = existing.filter(
+                sc => !(sc.name === toRemove.shellCommand.name && sc.command === toRemove.shellCommand.command)
+            );
+            await cfg.update('shellCommands', updated.length > 0 ? updated : undefined, target);
+            vscode.window.showInformationMessage(`VFrenzy: Shell command "${toRemove.label}" removed.`);
+            break;
+        }
+
+        case 'settings':
+            await vscode.commands.executeCommand('workbench.action.openSettings', 'vfrenzy.shellCommands');
+            break;
+    }
+}
+
 /**
  * Main menu shown when the user clicks the workspace name badge.
  */
 async function showMenuCommand(): Promise<void> {
-    type Action = 'customName' | 'color' | 'fontColor' | 'icon' | 'style' | 'decoration' | 'reset';
+    type Action = 'customName' | 'color' | 'fontColor' | 'icon' | 'style' | 'decoration' | 'openShell' | 'manageShell' | 'reset';
     interface MenuItem extends vscode.QuickPickItem { action?: Action; }
 
     const cfg = vscode.workspace.getConfiguration('vfrenzy');
@@ -478,6 +715,7 @@ async function showMenuCommand(): Promise<void> {
     const currentStyle = cfg.get<string>('workspaceNameStyle', 'normal');
 
     const currentCustomName = cfg.get<string>('customName', '').trim();
+    const shellCommands = getShellCommands();
 
     const items: MenuItem[] = [
         {
@@ -515,6 +753,18 @@ async function showMenuCommand(): Promise<void> {
             description: currentDeco,
             detail: 'Surround the workspace name with a Unicode pattern',
             action: 'decoration',
+        },
+        { label: '', kind: vscode.QuickPickItemKind.Separator },
+        {
+            label: '$(terminal-bash) Open shell tab',
+            description: shellCommands.length === 0 ? '(no commands configured)' : `${shellCommands.length} command(s)`,
+            detail: 'Open a new terminal tab and run a pre-defined command',
+            action: 'openShell',
+        },
+        {
+            label: '$(list-unordered) Manage shell commands',
+            detail: 'Add, remove, or edit saved shell commands',
+            action: 'manageShell',
         },
         { label: '', kind: vscode.QuickPickItemKind.Separator },
         {
@@ -581,6 +831,9 @@ async function showMenuCommand(): Promise<void> {
             await cfg.update('workspaceNameBadgeDecoration', decoPick.label, target);
             break;
         }
+
+        case 'openShell':    return openShellTabCommand();
+        case 'manageShell':  return manageShellCommandsCommand();
     }
 }
 
@@ -614,7 +867,9 @@ export function activate(context: vscode.ExtensionContext): void {
         vscode.commands.registerCommand('vfrenzy.setCustomName', setCustomNameCommand),
         vscode.commands.registerCommand('vfrenzy.setColor', setColorCommand),
         vscode.commands.registerCommand('vfrenzy.resetColor', resetColorCommand),
-        vscode.commands.registerCommand('vfrenzy.setIcon', setIconCommand)
+        vscode.commands.registerCommand('vfrenzy.setIcon', setIconCommand),
+        vscode.commands.registerCommand('vfrenzy.openShellTab', openShellTabCommand),
+        vscode.commands.registerCommand('vfrenzy.manageShellCommands', manageShellCommandsCommand)
     );
 
     // Dispose status bar item on deactivation

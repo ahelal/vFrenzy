@@ -118,6 +118,37 @@
           ],
           "description": "Decorative pattern applied around the workspace name badge text. Note: VS Code's status bar background only supports solid hex colors via the official API; true CSS background patterns (diagonal stripes, gradients) are not possible without a CSS-injection extension. These decorations enhance the text area itself using Unicode characters.",
           "scope": "window"
+        },
+        "vfrenzy.shellCommands": {
+          "type": "array",
+          "default": [],
+          "description": "Named shell commands that can be opened as terminal tabs via VFrenzy.",
+          "scope": "window",
+          "items": {
+            "type": "object",
+            "required": ["name", "command"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Display name for this shell command (shown in the tab title and quick pick)."
+              },
+              "command": {
+                "type": "string",
+                "description": "Shell command to execute outside a dev-container (or when no dev-container override is set)."
+              },
+              "devContainerCommand": {
+                "type": "string",
+                "description": "Shell command to execute when running inside a dev-container. Overrides 'command' in that context."
+              }
+            }
+          }
+        },
+        "vfrenzy.shellCommandConfirm": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a confirmation dialog with the command text before opening a shell tab. Set to false to run immediately.",
+          "scope": "window"
         }
       }
     },
@@ -141,6 +172,21 @@
       {
         "command": "vfrenzy.setIcon",
         "title": "VFrenzy: Set Workspace Name Icon"
+      },
+      {
+        "command": "vfrenzy.openShellTab",
+        "title": "VFrenzy: Open Shell Tab"
+      },
+      {
+        "command": "vfrenzy.manageShellCommands",
+        "title": "VFrenzy: Manage Shell Commands"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "vfrenzy.openShellTab",
+        "key": "ctrl+alt+shift+t",
+        "mac": "cmd+alt+shift+t"
       }
     ]
   },

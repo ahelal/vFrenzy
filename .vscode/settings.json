@@ -3,5 +3,13 @@
     "vfrenzy.statusBarFontColor": "#FFD700",
     "vfrenzy.workspaceNameIcon": "star-full",
     "vfrenzy.workspaceNameStyle": "uppercase",
-    "vfrenzy.workspaceNameBadgeDecoration": "double-angle"
+    "vfrenzy.workspaceNameBadgeDecoration": "double-angle",
+    "workbench.colorCustomizations": {
+        "statusBar.background": "#C7254E",
+        "statusBar.noFolderBackground": "#C7254E",
+        "statusBar.debuggingBackground": "#C7254E",
+        "statusBar.foreground": "#FFD700",
+        "statusBar.noFolderForeground": "#FFD700",
+        "statusBar.debuggingForeground": "#FFD700"
+    }
 }
